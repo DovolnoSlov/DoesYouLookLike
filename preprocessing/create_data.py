@@ -12,15 +12,15 @@ class GetEmbedding:
     Поиск лиц на фотографиях, и сохранение полученных эмбедингов в pickle
 
     Args:
-        actors (list): список актёров/актрис
         path_load (str): путь до каталогов с изображениями
+        actors (list): список актёров/актрис
         path_save (str): путь сохранения эмбеддингов и таргетов
 
     """
 
-    def __init__(self, actors: list, path_load: str, path_save: str):
-        self.actors = actors
+    def __init__(self, path_load: str, actors: list, path_save: str):
         self.path_load = path_load
+        self.actors = actors
         self.path_save = path_save
 
     def get_save_embedding(self) -> None:

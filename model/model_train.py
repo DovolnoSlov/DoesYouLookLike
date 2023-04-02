@@ -18,12 +18,12 @@ __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-pathLoad = os.path.abspath(os.path.join('.', *config['load_data']['path']))
-targetActors = config['load_data']['images']['target_actors']
-sizeImageNew = config['load_data']['images']['size_new']
-limitLoadImage = config['load_data']['images']['limit']
+pathImages = os.path.abspath(os.path.join('.', *config['load_images']['path']))
+targetActors = config['load_images']['images']['target_actors']
+sizeImageNew = config['load_images']['images']['size_new']
+limitLoadImage = config['load_images']['images']['limit']
 
-pathModel = os.path.abspath(os.path.join('.', *config['model']['path_data']))
+pathModel = os.path.abspath(os.path.join('.', *config['model']['path']))
 randomState = config['model']['random_state']
 testSize = config['model']['test_size']
 coefC = config['model']['coef_C']
@@ -128,12 +128,14 @@ if __name__ == "__main__":
     # !!! Проверка закачки данных и прочего из preprocessing !!! #
     # !!! Проверка закачки данных и прочего из preprocessing !!! #
     if keyLoadImages:
-        preprocessing.download_images()
-
-        # download_images(path_to_images_dir, target_actors, limit_load_image)
-        # reformat_photo(path_to_images_dir, target_actors, size_image_new)
-        # actors_embedding = GetEmbedding(target_actors, path_to_images_dir, path_model)
-        # actors_embedding.get_save_embedding()
+        # Загрузка изображений указанных актёров/актрис
+        preprocessing.download_images(pathImages, targetActors, limitLoadImage)
+        # Изменение размера всех изображений
+        preprocessing.reformat_photo(pathImages, targetActors, sizeImageNew)
+        # Создание объекта класса, для поиска лиц на фотографиях
+        actors_embedding = preprocessing.GetEmbedding(pathImages, targetActors, pathModel)
+        # Получение эмбеддингов, таргетов, имён с индексами, и сохранение в файлы
+        actors_embedding.get_save_embedding()
 
     MyModel = ModelImgLR(pathModel, randomState, testSize, coefC)
     MyModel.fit_model()

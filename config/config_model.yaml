@@ -1,4 +1,4 @@
-load_data:
+load_images:
   path: ['data', 'train_images']
 
   images:
@@ -9,7 +9,7 @@ load_data:
     limit: 15
 
 model:
-  path_data: ['data', 'model_data']
+  path: ['data', 'model_data']
   random_state: 13
   test_size: 0.25
   coef_C: 1.0
