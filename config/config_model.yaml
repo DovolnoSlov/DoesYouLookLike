@@ -12,7 +12,7 @@ model:
   path_data: ['data', 'model_data']
   random_state: 13
   test_size: 0.25
-  coef_C: 0.8
+  coef_C: 1.0
   key_load_images: False
 
 predict:
