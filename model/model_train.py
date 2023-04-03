@@ -8,11 +8,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 
-import logging
-
-logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(message)s')
-
 import preprocessing
+
+import logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(message)s')
 
 __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
 with open(os.path.join(__config_path)) as f:
@@ -30,10 +29,13 @@ coefC = config['model']['coef_C']
 keyLoadImages = config['model']['key_load_images']
 
 
+class NoLoad(Exception):
+    pass
+
+
 class ModelImgLR:
     """
     Модель логистической регрессии
-
 
     Args:
         path_load (str): путь до каталога с эмбеддингами и таргетами
@@ -48,20 +50,24 @@ class ModelImgLR:
         self.random_state = random_state
         self.coef_c = coef_c
 
-        # загрузка эмбеддингов и таргетов
-        self.embeddings, self.targets = self.__load_data()
+        self.embeddings = None
+        self.targets = None
+        self.__f1_model_score = None
+
+        # флаг проведения обучения модели
         self.__fit_flag = False
-        self.__f1_model_score = 0.0
 
     def fit_model(self) -> None:
         """
         Обучение модели,
-        сохранение в pickle, в каталог с эмбеддингами и таргетами
-
-        :return: модель машинного обучения, тестовые данные X_test и y_test
-        :rtype: LogisticRegression, np.array, np.array
-
+        сохранение в pickle формате, в каталог с эмбеддингами и таргетами
         """
+        try:
+            self.embeddings, self.targets = self.__load_data()
+            if not self.embeddings:
+                raise NoLoad('Проблема с загрузкой эмбеддингов и таргетов')
+        except NoLoad as ex:
+            logging.info(f'Произошла ошибка: {ex}')
 
         min_num_target, name_min_target = self.__check_min_target()
         if min_num_target > 1:
@@ -92,7 +98,7 @@ class ModelImgLR:
             with open(path_targets, 'rb') as file:
                 load_targets = pickle.load(file)
         except Exception as ex:
-            print(f'Error: {ex}')
+            logging.info(f'Произошла ошибка: {ex}')
         else:
             return load_embeddings, load_targets
 
@@ -117,24 +123,25 @@ class ModelImgLR:
             pickle.dump(model_LR, f)
 
     def get_score(self):
+        """ Получение значения по метрике f1_score """
+
         if not self.__fit_flag:
             logging.info(f'Модель не обучена!')
-            return None
         return self.__f1_model_score
 
 
 if __name__ == "__main__":
-    # !!! Проверка закачки данных и прочего из preprocessing !!! #
-    # !!! Проверка закачки данных и прочего из preprocessing !!! #
-    # !!! Проверка закачки данных и прочего из preprocessing !!! #
     if keyLoadImages:
-        # Загрузка изображений указанных актёров/актрис
+        # загрузка изображений указанных актёров/актрис
         preprocessing.download_images(pathImages, targetActors, limitLoadImage)
-        # Изменение размера всех изображений
+
+        # изменение размера всех изображений
         preprocessing.reformat_photo(pathImages, targetActors, sizeImageNew)
-        # Создание объекта класса, для поиска лиц на фотографиях
+
+        # моздание объекта класса, для поиска лиц на фотографиях
         actors_embedding = preprocessing.GetEmbedding(pathImages, targetActors, pathModel)
-        # Получение эмбеддингов, таргетов, имён с индексами, и сохранение в файлы
+
+        # получение эмбеддингов, таргетов, имён с индексами, и сохранение в файлы
         actors_embedding.get_save_embedding()
 
     MyModel = ModelImgLR(pathModel, randomState, testSize, coefC)
