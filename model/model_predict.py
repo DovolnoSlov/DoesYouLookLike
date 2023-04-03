@@ -13,7 +13,6 @@ class PredictModelImgLR:
     """
     Предсказание на модели логистической регрессии по тестовому изображению
 
-
     Args:
         path_load (str): путь до каталога с тестовым изображением
         size_new (int): необходимый размер изображения по одной из сторон
@@ -59,7 +58,7 @@ class PredictModelImgLR:
         else:
             return load_model, load_name_labels
 
-    def __load_image(self) -> np.array(Image):
+    def __load_image(self) -> np.array:
         """ Загрузка изображения, с изменением размера """
 
         path_test_image = os.path.join(self.path_load, 'test_image4.jpg')
@@ -69,3 +68,6 @@ class PredictModelImgLR:
             test_photo_resized_conv = np.array(test_photo_resized.convert('RGB'))
 
         return test_photo_resized_conv
+
+
+''' Вызов изменения размера изображения из preproicessing!! '''
