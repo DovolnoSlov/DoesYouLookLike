@@ -78,6 +78,7 @@ def count_files_in_dir(path_dir: str, name_dir: str) -> bool:
 def reformat_photo(path_load: str, actors: list, size_new: int) -> None:
     """
     Изменение размера всех изображений
+
     :param path_load: путь до каталогов с изображениями
     :param actors: список актёров/актрис
     :param size_new: необходимый размер изображения по одной из сторон
@@ -100,6 +101,7 @@ def reformat_photo(path_load: str, actors: list, size_new: int) -> None:
 def resize_photo(image: Image, size_new: int) -> Image:
     """
     Изменение размера изображения
+
     :param image: исходное изображение
     :param size_new: необходимый размер изображения по одной из сторон
 

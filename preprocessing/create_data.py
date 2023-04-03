@@ -4,8 +4,6 @@ import face_recognition
 import pickle
 import json
 
-''' Главное чтобы все параметры из конфига подтянуть'''
-
 
 class GetEmbedding:
     """
@@ -15,7 +13,6 @@ class GetEmbedding:
         path_load (str): путь до каталогов с изображениями
         actors (list): список актёров/актрис
         path_save (str): путь сохранения эмбеддингов и таргетов
-
     """
 
     def __init__(self, path_load: str, actors: list, path_save: str):
