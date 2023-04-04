@@ -4,9 +4,18 @@ import face_recognition
 from PIL import Image
 import pickle
 import json
+import yaml
+import preprocessing
 
 import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(message)s')
+
+__config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
+with open(os.path.join(__config_path)) as f:
+    config = yaml.safe_load(f)
+
+PATH_USER_PHOTO = os.path.abspath(os.path.join('.', *config['predict']['path']))
+SIZE_USERS_PHOTO_NEW = config['predict']['size_image_users']
 
 
 class PredictModelImgLR:
@@ -61,13 +70,20 @@ class PredictModelImgLR:
     def __load_image(self) -> np.array:
         """ Загрузка изображения, с изменением размера """
 
-        path_test_image = os.path.join(self.path_load, 'test_image4.jpg')
+        path_test_image = os.path.join(self.path_load, 'user_photo.jpg')
         # изменение формата тестового изображения
         with Image.open(path_test_image) as photo:
-            test_photo_resized = resize_photo(photo, self.size_new)
+            test_photo_resized = preprocessing.resize_photo(photo, self.size_new)
             test_photo_resized_conv = np.array(test_photo_resized.convert('RGB'))
 
         return test_photo_resized_conv
 
 
-''' Вызов изменения размера изображения из preproicessing!! '''
+def predict_model_img_lr(username):
+    path_load = os.path.join(PATH_USER_PHOTO, username)
+    predict_model_img_lr = PredictModelImgLR(path_load, SIZE_USERS_PHOTO_NEW)
+    predict = predict_model_img_lr.predict_model()
+    return predict
+
+    ''' PREDICT PROBA с разбитием на табличку топа '''
+    ''' Разбить на меньшие функции после if! '''

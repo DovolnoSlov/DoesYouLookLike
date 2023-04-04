@@ -16,5 +16,5 @@ model:
   key_load_images: False
 
 predict:
-  size_image_users: 1024
+  size_image_users: 512
   path: ['data', 'user_photo']
