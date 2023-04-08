@@ -17,12 +17,12 @@ __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-pathImages = os.path.abspath(os.path.join('.', *config['load_images']['path']))
+pathImages = os.path.abspath(os.path.join('..', *config['load_images']['path']))
 targetActors = config['load_images']['images']['target_actors']
 sizeImageNew = config['load_images']['images']['size_new']
 limitLoadImage = config['load_images']['images']['limit']
 
-pathModel = os.path.abspath(os.path.join('.', *config['model']['path']))
+pathModel = os.path.abspath(os.path.join('..', *config['model']['path']))
 randomState = config['model']['random_state']
 testSize = config['model']['test_size']
 coefC = config['model']['coef_C']
@@ -65,7 +65,7 @@ class ModelImgLR:
         try:
             self.embeddings, self.targets = self.__load_data()
             if not self.embeddings:
-                raise NoLoad('Проблема с загрузкой эмбеддингов и таргетов')
+                raise NoLoad("Проблема с загрузкой эмбеддингов и таргетов")
         except NoLoad as ex:
             logging.info(f'Произошла ошибка: {ex}')
 

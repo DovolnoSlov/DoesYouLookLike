@@ -14,7 +14,7 @@ __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-PATH_USER_PHOTO = os.path.abspath(os.path.join('.', *config['predict']['path']))
+PATH_USER_PHOTO = os.path.abspath(os.path.join('..', *config['predict']['path']))
 SIZE_USERS_PHOTO_NEW = config['predict']['size_image_users']
 
 
@@ -45,8 +45,8 @@ class PredictModelImgLR:
             test_face_encod = face_recognition.face_encodings(test_photo_resized_conv)[0]
             test_predict = self.model.predict([test_face_encod])
             test_predict_name = list(self.name_labels.keys())[list(self.name_labels.values()).index(test_predict)]
-            print('predict: %d' % test_predict)
-            print('predict name: %s' % test_predict_name)
+            print("predict: %d" % test_predict)
+            print("predict name: %s" % test_predict_name)
 
             test_predict_proba = self.model.predict_proba([test_face_encod])[0][test_predict][0]
             print(test_predict_proba)
