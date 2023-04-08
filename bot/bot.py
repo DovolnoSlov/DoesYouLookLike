@@ -27,14 +27,24 @@ class UserState(StatesGroup):
     photo = State()
 
 
-@dp.message_handler(commands=['start'])
+@dp.message_handler(commands=['start', 'help'])
+async def send_help(message: types.Message):
+    bot_name = await bot.get_me()
+    await message.reply(f"Меня зовут {bot_name['username']}, "
+                        f"приятно познакомиться!\n"
+                        f"/like - по данной команде Вы запустите работу, "
+                        f"в рамках которой нужно будет отправить фотографию, "
+                        f"и Вы получите результат схожести с кем-то из знаменитых людей!")
+
+
+@dp.message_handler(commands=['like'])
 async def user_register(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = ['М', 'Ж']
     keyboard.add(*buttons)
 
     user_full_name = message.from_user.full_name
-    answer_text = "Привет, {name}!" \
+    answer_text = "Начнём, {name}!" \
                   "\nукажите свой пол".format(name=user_full_name)
 
     logging.info(f'Набор команды start')
@@ -55,6 +65,8 @@ async def get_address(message: types.Message, state: FSMContext):
     if message.content_type in ['document', 'photo']:
         inp_photo, load_path = await __doc_type_path(message)
         await inp_photo.download(destination_file=load_path)
+        # !!!!!!!!!!!!!!!!!! ТУТ ПРЕДИКТ МОДЕЛИ ПО ФОТО
+        # await...
     else:
         answer = "К сожалению, это не фотография. Попробуйте сновая, начиная с команды /start"
         await bot.send_message(message.from_user.id, answer)
@@ -93,16 +105,6 @@ async def download_photo(message: types.Message):
     user_photo_name = f'{user_name}_photo.jpg'
     load_path = os.path.join(LOAD_USER_PHOTO_PATH, user_name, user_photo_name)
     await inp_photo.download(destination_file=load_path)
-
-
-    # if message.content_type == 'document':
-    #     file_id = message.document.file_id
-    # if message.content_type == 'photo':
-    #     file_id = message.photo[-1].file_id
-    #
-    # file = await bot.get_file(file_id)
-    # file_path = file.file_path
-    # await bot.download_file(file_path, destination=f"../user_photo/123/123.jpg")
 
 
 # cat's foto
