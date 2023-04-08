@@ -55,21 +55,14 @@ class GetEmbedding:
             images_for_name = os.listdir(path_to_images)
             for img in images_for_name:
                 try:
-                    path_image = os.path.join(path_to_images, img)
-                    face = face_recognition.load_image_file(path_image)
-
-                    face_boxes = face_recognition.face_locations(face)
-                    # если найдено больше 1 лица на изображении - оно исключается
-                    if len(face_boxes) != 1:
+                    face = self.__load_image(path_to_images, img)
+                    if self.__count_face_locations(face):
                         continue
 
-                    try:
-                        face_encod = face_recognition.face_encodings(face)[0]
-                        embeddings = np.vstack((embeddings, face_encod))
-                        # добавление таргета по имени
-                        targets.append(name_labels[name])
-                    except Exception as ex:
-                        print(f'Error: {ex}')
+                    face_encod = face_recognition.face_encodings(face)[0]
+                    embeddings = np.vstack((embeddings, face_encod))
+                    # добавление таргета по имени
+                    targets.append(name_labels[name])
 
                 except Exception as ex:
                     print(f'Error: {ex}')
@@ -83,3 +76,19 @@ class GetEmbedding:
         for label, name in enumerate(self.actors):
             name_labels[name] = label
         return name_labels
+
+    def __load_image(self, path_to_images: str, img:str) -> np.array:
+        """ Загрузка изображения """
+
+        path_image = os.path.join(path_to_images, img)
+        load_face = face_recognition.load_image_file(path_image)
+        return load_face
+
+    def __count_face_locations(self, face: np.array) -> bool:
+        """ Поиск и проверка количества лиц на изображении """
+
+        face_boxes = face_recognition.face_locations(face)
+        # если найдено больше 1 лица на изображении - оно исключается
+        if len(face_boxes) != 1:
+            return True
+        return False

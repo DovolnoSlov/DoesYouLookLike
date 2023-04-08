@@ -130,7 +130,7 @@ class ModelImgLR:
         return self.__f1_model_score
 
 
-if __name__ == "__main__":
+def __main():
     if keyLoadImages:
         # загрузка изображений указанных актёров/актрис
         preprocessing.download_images(pathImages, targetActors, limitLoadImage)
@@ -144,7 +144,12 @@ if __name__ == "__main__":
         # получение эмбеддингов, таргетов, имён с индексами, и сохранение в файлы
         actors_embedding.get_save_embedding()
 
-    MyModel = ModelImgLR(pathModel, randomState, testSize, coefC)
-    MyModel.fit_model()
-    f1_model_score = MyModel.get_score()
+    my_model = ModelImgLR(pathModel, randomState, testSize, coefC)
+    my_model.fit_model()
+    f1_model_score = my_model.get_score()
     print(f'Метрика модели: F1 score: {f1_model_score}')
+
+
+if __name__ == "__main__":
+    __main()
+
