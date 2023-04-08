@@ -95,16 +95,16 @@ async def echo(message: types.Message):
     await message.answer(answer_text)
 
 
-@dp.message_handler(content_types=['document', 'photo'])
-async def download_photo(message: types.Message):
-    if message.content_type == 'document':
-        inp_photo = message.document
-    if message.content_type == 'photo':
-        inp_photo = message.photo[-1]
-    user_name = message.from_user.username
-    user_photo_name = f'{user_name}_photo.jpg'
-    load_path = os.path.join(LOAD_USER_PHOTO_PATH, user_name, user_photo_name)
-    await inp_photo.download(destination_file=load_path)
+# @dp.message_handler(content_types=['document', 'photo'])
+# async def download_photo(message: types.Message):
+#     if message.content_type == 'document':
+#         inp_photo = message.document
+#     if message.content_type == 'photo':
+#         inp_photo = message.photo[-1]
+#     user_name = message.from_user.username
+#     user_photo_name = f'{user_name}_photo.jpg'
+#     load_path = os.path.join(LOAD_USER_PHOTO_PATH, user_name, user_photo_name)
+#     await inp_photo.download(destination_file=load_path)
 
 
 # cat's foto
