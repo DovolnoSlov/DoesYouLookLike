@@ -1,14 +1,15 @@
-import config_bot
-import logging
-import os
-import yaml
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
-from model.model_predict import *
+import os
+import yaml
+from model import model_predict
+
+import config_bot   # содержит токен чат-бота
 
 # log level
+import logging
 logging.basicConfig(level=logging.INFO)
 
 __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
@@ -67,7 +68,8 @@ async def get_address(message: types.Message, state: FSMContext):
         inp_photo, path_save = await __doc_type_path(message)
         await inp_photo.download(destination_file=path_save)
         # !!!!!!!!!!!!!!!!!! ТУТ ПРЕДИКТ МОДЕЛИ ПО ФОТО
-        model = PredictModelImgLR()
+        model = model_predict.PredictModelImgLR(path_save)
+        test_predict, test_predict_name, test_predict_proba = model.predict_model()
         # await...
     else:
         answer = "К сожалению, это не фотография. Попробуйте сновая, начиная с команды /start"

@@ -23,7 +23,7 @@ class GetEmbedding:
     def get_save_embedding(self) -> None:
         """ Получение эмбеддингов, таргетов, имён с индексами, и сохранение в файлы """
 
-        embeddings, targets, name_labels = self.__create_embedding()
+        embeddings, targets, name_targets = self.__create_embedding()
 
         path_emb = os.path.join(self.path_save, 'embeddings.pkl')
         with open(path_emb, 'wb') as f:
@@ -33,8 +33,8 @@ class GetEmbedding:
         with open(path_tar, 'wb') as f:
             pickle.dump(targets, f)
 
-        path_act = os.path.join(self.path_save, 'name_labels.json')
-        json_act = json.dumps(name_labels, indent=4)
+        path_act = os.path.join(self.path_save, 'name_targets.json')
+        json_act = json.dumps(name_targets, indent=4)
         with open(path_act, 'w') as f:
             f.write(json_act)
 
@@ -49,7 +49,7 @@ class GetEmbedding:
 
         embeddings = np.empty(128)
         targets = []
-        name_labels = self.__create_labels()
+        name_targets = self.__create_targets()
         for name in self.actors:
             path_to_images = os.path.join(self.path_load, name)
             images_for_name = os.listdir(path_to_images)
@@ -62,20 +62,20 @@ class GetEmbedding:
                     face_encod = face_recognition.face_encodings(face)[0]
                     embeddings = np.vstack((embeddings, face_encod))
                     # добавление таргета по имени
-                    targets.append(name_labels[name])
+                    targets.append(name_targets[name])
 
                 except Exception as ex:
                     print(f'Error: {ex}')
 
-        return embeddings[1:], targets, name_labels
+        return embeddings[1:], targets, name_targets
 
-    def __create_labels(self) -> dict:
+    def __create_targets(self) -> dict:
         """ Создание словаря имена:таргеты """
 
-        name_labels = dict()
-        for label, name in enumerate(self.actors):
-            name_labels[name] = label
-        return name_labels
+        name_targets = dict()
+        for target, name in enumerate(self.actors):
+            name_targets[name] = target
+        return name_targets
 
     def __load_image(self, path_to_images: str, img:str) -> np.array:
         """ Загрузка изображения """

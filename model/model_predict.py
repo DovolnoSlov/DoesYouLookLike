@@ -1,10 +1,11 @@
-import numpy as np
 import os
 import face_recognition
 from PIL import Image
 import pickle
 import json
 import yaml
+import pandas as pd
+import numpy as np
 import preprocessing
 
 import logging
@@ -28,33 +29,36 @@ class PredictModelImgLR:
         path_load_model (str): путь до тестового изображения
     """
 
-    def __init__(self, path_load_image: str, size_new: int = 512, path_load_model: str = PATH_LOAD_MODEL):
+    def __init__(self, path_load_image: str,
+                 size_new: int = SIZE_USERS_PHOTO_NEW, path_load_model: str = PATH_LOAD_MODEL):
         self.path_load_image = path_load_image
         self.size_new = size_new
         self.path_load_model = path_load_model
 
         # загрузка модели, словаря имён:таргетов
-        self.model, self.name_labels = self.__load_data()
+        self.model, self.name_targets = self.__load_data()
 
     def predict_model(self):
         """ Предсказание на модели логистической регрессии """
 
-        test_photo_resized_conv = self.__load_image()
+        photo_resized_conv = self.__load_image()
 
-        test_face_boxes = face_recognition.face_locations(test_photo_resized_conv)
+        face_boxes = face_recognition.face_locations(photo_resized_conv)
         # если найдено больше 1 лица на изображении - оно исключается
-        if len(test_face_boxes) == 1:
-            test_face_encod = face_recognition.face_encodings(test_photo_resized_conv)[0]
-            test_predict = self.model.predict([test_face_encod])
-            test_predict_name = list(self.name_labels.keys())[list(self.name_labels.values()).index(test_predict)]
-            test_predict_proba = self.model.predict_proba([test_face_encod])[0][test_predict][0]
+        if len(face_boxes) == 1:
+            face_encod = face_recognition.face_encodings(photo_resized_conv)[0]
+            pred_target_top = self.model.predict([face_encod])
+            pred_name_top = list(self.name_targets.keys())[list(self.name_targets.values()).index(pred_target_top)]
+            pred_proba = self.model.predict_proba([face_encod])[0]
+            pred_proba_top = pred_proba[pred_target_top][0]
+            #df_name_predict = pd.DataFrame()
+            #pred_proba = self.model.pred_proba([face_encod])[0][pred_target][0]
 
-            # print("predict: %d" % test_predict)
-            # print("predict name: %s" % test_predict_name)
-            # print(test_predict_proba)
+            # print("predict: %d" % pred_target)
+            # print("predict name: %s" % pred_name)
+            # print(pred_proba)
 
-            return test_predict, test_predict_name, test_predict_proba
-
+            return pred_name_top, pred_proba_top
 
     def __load_data(self) -> tuple[np.array, dict]:
         """ Загрузка данных для обучения """
@@ -64,13 +68,13 @@ class PredictModelImgLR:
             with open(path_model, 'rb') as file:
                 load_model = pickle.load(file)
 
-            path_act = os.path.join(self.path_load_model, 'name_labels.json')
+            path_act = os.path.join(self.path_load_model, 'name_targets.json')
             with open(path_act, 'r') as file:
-                load_name_labels = json.load(file)
+                load_name_targets = json.load(file)
         except Exception as ex:
             print(f'Error: {ex}')
         else:
-            return load_model, load_name_labels
+            return load_model, load_name_targets
 
     def __load_image(self) -> np.array:
         """ Загрузка изображения, с изменением размера """
@@ -78,26 +82,25 @@ class PredictModelImgLR:
         # path_test_image = os.path.join(self.path_load, 'user_photo.jpg')
         # изменение формата тестового изображения
         with Image.open(self.path_load_image) as photo:
-            test_photo_resized = preprocessing.resize_photo(photo, self.size_new)
-            test_photo_resized_conv = np.array(test_photo_resized.convert('RGB'))
+            photo_resized = preprocessing.resize_photo(photo, self.size_new)
+            photo_resized_conv = np.array(photo_resized.convert('RGB'))
 
-        return test_photo_resized_conv
+        return photo_resized_conv
 
 
 # что за хрень
-def predict_model_img_lr():
+def __test_predict_model_img_lr():
     path_dir = os.path.abspath(os.path.join('..', *config['predict']['path']))
     user_name = 'dovolno_slov'
     user_photo_name = f'{user_name}_photo.jpg'
     path_load = os.path.join(path_dir, user_name, user_photo_name)
 
     predict_model_img_lr = PredictModelImgLR(path_load, SIZE_USERS_PHOTO_NEW)
-    test_predict, test_predict_name, test_predict_proba = predict_model_img_lr.predict_model()
+    pred_name, pred_proba_top = predict_model_img_lr.predict_model()
 
-    print("predict: %d" % test_predict)
-    print("predict name: %s" % test_predict_name)
-    print(test_predict_proba)
+    print("predict name: %s" % pred_name)
+    print(pred_proba_top)
 
 
 if __name__ == "__main__":
-    predict_model_img_lr()
+    __test_predict_model_img_lr()
