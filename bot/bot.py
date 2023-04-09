@@ -16,7 +16,7 @@ __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-PATH_SAVE_USER_PHOTO = os.path.abspath(os.path.join('..', *config['predict']['path']))
+PATH_SAVE_USER_IMAGE = os.path.abspath(os.path.join('..', *config['predict']['path']))
 
 # bot init
 bot = Bot(token=config_bot.TOKEN)
@@ -85,7 +85,7 @@ async def __doc_type_path(message):
         inp_photo = message.photo[-1]
     user_name = message.from_user.username
     user_photo_name = f'{user_name}_photo.jpg'
-    path_save = os.path.join(PATH_SAVE_USER_PHOTO, user_name, user_photo_name)
+    path_save = os.path.join(PATH_SAVE_USER_IMAGE, user_name, user_photo_name)
     logging.info(f"Закачка фото, этап 2")
     return inp_photo, path_save
 

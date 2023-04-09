@@ -1,5 +1,5 @@
 __all__ = ['download_images', 'rename_dir', 'count_files_in_dir',
-           'reformat_photo', 'resize_photo']
+           'reformat_image', 'resize_image']
 
 import os
 import shutil
@@ -75,7 +75,7 @@ def count_files_in_dir(path_dir: str, name_dir: str) -> bool:
     return False
 
 
-def reformat_photo(path_load: str, actors: list, size_new: int) -> None:
+def reformat_image(path_load: str, actors: list, size_new: int) -> None:
     """
     Изменение размера всех изображений
 
@@ -92,13 +92,13 @@ def reformat_photo(path_load: str, actors: list, size_new: int) -> None:
         for img in images:
             path_image = os.path.join(path_to_images, img)
             # изменение формата изображения и сохранения под тем же именем
-            with Image.open(path_image) as photo:
-                photo_resized = resize_photo(photo, size_new)
-                photo_resized_conv = photo_resized.convert('RGB')
-                photo_resized_conv.save(path_image)
+            with Image.open(path_image) as image:
+                image_resized = resize_image(image, size_new)
+                image_resized_conv = image_resized.convert('RGB')
+                image_resized_conv.save(path_image)
 
 
-def resize_photo(image: Image, size_new: int) -> Image:
+def resize_image(image: Image, size_new: int) -> Image:
     """
     Изменение размера изображения
 

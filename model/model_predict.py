@@ -16,7 +16,7 @@ with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
 PATH_LOAD_MODEL = os.path.abspath(os.path.join('..', *config['model']['path']))
-SIZE_USERS_PHOTO_NEW = config['predict']['size_image_users']
+SIZE_USERS_IMAGE_NEW = config['predict']['size_image_users']
 
 
 class PredictModelImgLR:
@@ -30,7 +30,7 @@ class PredictModelImgLR:
     """
 
     def __init__(self, path_load_image: str,
-                 size_new: int = SIZE_USERS_PHOTO_NEW, path_load_model: str = PATH_LOAD_MODEL):
+                 size_new: int = SIZE_USERS_IMAGE_NEW, path_load_model: str = PATH_LOAD_MODEL):
         self.path_load_image = path_load_image
         self.size_new = size_new
         self.path_load_model = path_load_model
@@ -41,11 +41,11 @@ class PredictModelImgLR:
     def predict_model(self):
         """ Предсказание на модели логистической регрессии """
 
-        photo_resized_conv = self.__load_image()
-        face_boxes = face_recognition.face_locations(photo_resized_conv)
+        image_resized_conv = self.__load_image()
+        face_boxes = face_recognition.face_locations(image_resized_conv)
         # если найдено больше 1 лица на изображении - оно исключается
         if len(face_boxes) == 1:
-            face_encod = face_recognition.face_encodings(photo_resized_conv)[0]
+            face_encod = face_recognition.face_encodings(image_resized_conv)[0]
             pred_target_top = self.model.predict([face_encod])
             pred_name_top = list(self.name_targets.keys())[list(self.name_targets.values()).index(pred_target_top)]
             pred_proba = self.model.predict_proba([face_encod])[0]
@@ -74,13 +74,13 @@ class PredictModelImgLR:
     def __load_image(self) -> np.array:
         """ Загрузка изображения, с изменением размера """
 
-        # path_test_image = os.path.join(self.path_load, 'user_photo.jpg')
+        # path_test_image = os.path.join(self.path_load, 'user_image.jpg')
         # изменение формата тестового изображения
-        with Image.open(self.path_load_image) as photo:
-            photo_resized = preprocessing.resize_photo(photo, self.size_new)
-            photo_resized_conv = np.array(photo_resized.convert('RGB'))
+        with Image.open(self.path_load_image) as image:
+            image_resized = preprocessing.resize_image(image, self.size_new)
+            image_resized_conv = np.array(image_resized.convert('RGB'))
 
-        return photo_resized_conv
+        return image_resized_conv
 
     def __create_answer_df(self, pred_proba: list) -> str:
         """
@@ -103,10 +103,10 @@ class PredictModelImgLR:
 def __test_predict_model_img_lr():
     path_dir = os.path.abspath(os.path.join('..', *config['predict']['path']))
     user_name = 'dovolno_slov'
-    user_photo_name = f'{user_name}_photo.jpg'
-    path_load = os.path.join(path_dir, user_name, user_photo_name)
+    user_image_name = f'{user_name}_image.jpg'
+    path_load = os.path.join(path_dir, user_name, user_image_name)
 
-    predict_model_img_lr = PredictModelImgLR(path_load, SIZE_USERS_PHOTO_NEW)
+    predict_model_img_lr = PredictModelImgLR(path_load, SIZE_USERS_IMAGE_NEW)
     pred_name, pred_proba_top, df_name_predict_str = predict_model_img_lr.predict_model()
 
     print("predict name: %s" % pred_name)

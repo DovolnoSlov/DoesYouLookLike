@@ -17,4 +17,4 @@ model:
 
 predict:
   size_image_users: 512
-  path: ['data', 'user_photo']
+  path: ['data', 'users_image']

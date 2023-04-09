@@ -136,7 +136,7 @@ def __main():
         preprocessing.download_images(PATH_IMAGES, TARGET_ACTORS, LIMIT_LOAD_IMAGES)
 
         # изменение размера всех изображений
-        preprocessing.reformat_photo(PATH_IMAGES, TARGET_ACTORS, NEW_SIZE_OF_IMAGE)
+        preprocessing.reformat_image(PATH_IMAGES, TARGET_ACTORS, NEW_SIZE_OF_IMAGE)
 
         # моздание объекта класса, для поиска лиц на фотографиях
         actors_embedding = preprocessing.GetEmbedding(PATH_IMAGES, TARGET_ACTORS, PATH_MODEL)
