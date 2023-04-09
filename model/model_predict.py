@@ -42,7 +42,6 @@ class PredictModelImgLR:
         """ Предсказание на модели логистической регрессии """
 
         photo_resized_conv = self.__load_image()
-
         face_boxes = face_recognition.face_locations(photo_resized_conv)
         # если найдено больше 1 лица на изображении - оно исключается
         if len(face_boxes) == 1:
@@ -51,14 +50,10 @@ class PredictModelImgLR:
             pred_name_top = list(self.name_targets.keys())[list(self.name_targets.values()).index(pred_target_top)]
             pred_proba = self.model.predict_proba([face_encod])[0]
             pred_proba_top = pred_proba[pred_target_top][0]
-            #df_name_predict = pd.DataFrame()
-            #pred_proba = self.model.pred_proba([face_encod])[0][pred_target][0]
 
-            # print("predict: %d" % pred_target)
-            # print("predict name: %s" % pred_name)
-            # print(pred_proba)
+            df_name_predict_str = self.__create_answer_df(pred_proba)
 
-            return pred_name_top, pred_proba_top
+            return pred_name_top, pred_proba_top, df_name_predict_str
 
     def __load_data(self) -> tuple[np.array, dict]:
         """ Загрузка данных для обучения """
@@ -87,8 +82,24 @@ class PredictModelImgLR:
 
         return photo_resized_conv
 
+    def __create_answer_df(self, pred_proba: list) -> str:
+        """
+        Формирование ответа о сходстве в виде датасета
 
-# что за хрень
+        :param pred_proba: list: список предсказаний модели
+        :return: str: Ответ типа string в виде датасета имена-сходство (в процентах)
+        """
+
+        df_name_predict = pd.DataFrame()
+        col_name = self.name_targets.keys()
+        col_predict = [round(pred * 100, 2) for pred in pred_proba]
+        df_name_predict['Имена'] = col_name
+        df_name_predict['Сходство'] = col_predict
+        df_name_predict.sort_values('Сходство', ascending=False, inplace=True)
+        df_name_predict_str = df_name_predict.to_string(index=False)
+        return df_name_predict_str
+
+
 def __test_predict_model_img_lr():
     path_dir = os.path.abspath(os.path.join('..', *config['predict']['path']))
     user_name = 'dovolno_slov'
@@ -96,10 +107,11 @@ def __test_predict_model_img_lr():
     path_load = os.path.join(path_dir, user_name, user_photo_name)
 
     predict_model_img_lr = PredictModelImgLR(path_load, SIZE_USERS_PHOTO_NEW)
-    pred_name, pred_proba_top = predict_model_img_lr.predict_model()
+    pred_name, pred_proba_top, df_name_predict_str = predict_model_img_lr.predict_model()
 
     print("predict name: %s" % pred_name)
     print(pred_proba_top)
+    print('Процент:\n' + df_name_predict_str)
 
 
 if __name__ == "__main__":
