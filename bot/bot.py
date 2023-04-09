@@ -6,6 +6,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
+from model.model_predict import *
 
 # log level
 logging.basicConfig(level=logging.INFO)
@@ -14,7 +15,7 @@ __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-LOAD_USER_PHOTO_PATH = os.path.abspath(os.path.join('..', *config['predict']['path']))
+PATH_SAVE_USER_PHOTO = os.path.abspath(os.path.join('..', *config['predict']['path']))
 
 # bot init
 bot = Bot(token=config_bot.TOKEN)
@@ -63,9 +64,10 @@ async def get_username(message: types.Message, state: FSMContext):
 @dp.message_handler(state=UserState.photo, content_types=['document', 'photo', 'text'])
 async def get_address(message: types.Message, state: FSMContext):
     if message.content_type in ['document', 'photo']:
-        inp_photo, load_path = await __doc_type_path(message)
-        await inp_photo.download(destination_file=load_path)
+        inp_photo, path_save = await __doc_type_path(message)
+        await inp_photo.download(destination_file=path_save)
         # !!!!!!!!!!!!!!!!!! ТУТ ПРЕДИКТ МОДЕЛИ ПО ФОТО
+        model = PredictModelImgLR()
         # await...
     else:
         answer = "К сожалению, это не фотография. Попробуйте сновая, начиная с команды /start"
@@ -81,9 +83,9 @@ async def __doc_type_path(message):
         inp_photo = message.photo[-1]
     user_name = message.from_user.username
     user_photo_name = f'{user_name}_photo.jpg'
-    load_path = os.path.join(LOAD_USER_PHOTO_PATH, user_name, user_photo_name)
+    path_save = os.path.join(PATH_SAVE_USER_PHOTO, user_name, user_photo_name)
     logging.info(f"Закачка фото, этап 2")
-    return inp_photo, load_path
+    return inp_photo, path_save
 
 
 # Hi, name
@@ -95,29 +97,19 @@ async def echo(message: types.Message):
     await message.answer(answer_text)
 
 
-# @dp.message_handler(content_types=['document', 'photo'])
-# async def download_photo(message: types.Message):
-#     if message.content_type == 'document':
-#         inp_photo = message.document
-#     if message.content_type == 'photo':
-#         inp_photo = message.photo[-1]
-#     user_name = message.from_user.username
-#     user_photo_name = f'{user_name}_photo.jpg'
-#     load_path = os.path.join(LOAD_USER_PHOTO_PATH, user_name, user_photo_name)
-#     await inp_photo.download(destination_file=load_path)
-
-
 # cat's foto
 @dp.message_handler(regexp='(^cat[s]?$|puss|seba|Seba)')
 async def cats(message: types.Message):
     with open('seba/seba_001.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='Cats are here 😺')
 
-# polina's foto
+
+# Polina's foto
 @dp.message_handler(regexp='(^polina|Полина|Поля)')
 async def cats(message: types.Message):
     with open('raznoe/beautiful_in_the_world.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='😉')
+
 
 # echo
 @dp.message_handler()

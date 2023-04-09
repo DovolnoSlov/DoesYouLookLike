@@ -17,16 +17,16 @@ __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-pathImages = os.path.abspath(os.path.join('..', *config['load_images']['path']))
-targetActors = config['load_images']['images']['target_actors']
-sizeImageNew = config['load_images']['images']['size_new']
-limitLoadImage = config['load_images']['images']['limit']
+PATH_IMAGES = os.path.abspath(os.path.join('..', *config['load_images']['path']))
+TARGET_ACTORS = config['load_images']['images']['target_actors']
+NEW_SIZE_OF_IMAGE = config['load_images']['images']['size_new']
+LIMIT_LOAD_IMAGES = config['load_images']['images']['limit']
 
-pathModel = os.path.abspath(os.path.join('..', *config['model']['path']))
-randomState = config['model']['random_state']
-testSize = config['model']['test_size']
-coefC = config['model']['coef_C']
-keyLoadImages = config['model']['key_load_images']
+PATH_MODEL = os.path.abspath(os.path.join('..', *config['model']['path']))
+RANDOM_STATE = config['model']['random_state']
+TEST_SIZE = config['model']['test_size']
+COEF_C = config['model']['coef_C']
+KEY_LOAD_IMAGES = config['model']['key_load_images']
 
 
 class NoLoad(Exception):
@@ -131,20 +131,20 @@ class ModelImgLR:
 
 
 def __main():
-    if keyLoadImages:
+    if KEY_LOAD_IMAGES:
         # загрузка изображений указанных актёров/актрис
-        preprocessing.download_images(pathImages, targetActors, limitLoadImage)
+        preprocessing.download_images(PATH_IMAGES, TARGET_ACTORS, LIMIT_LOAD_IMAGES)
 
         # изменение размера всех изображений
-        preprocessing.reformat_photo(pathImages, targetActors, sizeImageNew)
+        preprocessing.reformat_photo(PATH_IMAGES, TARGET_ACTORS, NEW_SIZE_OF_IMAGE)
 
         # моздание объекта класса, для поиска лиц на фотографиях
-        actors_embedding = preprocessing.GetEmbedding(pathImages, targetActors, pathModel)
+        actors_embedding = preprocessing.GetEmbedding(PATH_IMAGES, TARGET_ACTORS, PATH_MODEL)
 
         # получение эмбеддингов, таргетов, имён с индексами, и сохранение в файлы
         actors_embedding.get_save_embedding()
 
-    my_model = ModelImgLR(pathModel, randomState, testSize, coefC)
+    my_model = ModelImgLR(PATH_MODEL, RANDOM_STATE, TEST_SIZE, COEF_C)
     my_model.fit_model()
     f1_model_score = my_model.get_score()
     print(f'Метрика модели: F1 score: {f1_model_score}')
