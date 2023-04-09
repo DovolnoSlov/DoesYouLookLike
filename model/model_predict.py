@@ -49,7 +49,7 @@ class PredictModelImgLR:
             pred_target_top = self.model.predict([face_encod])
             pred_name_top = list(self.name_targets.keys())[list(self.name_targets.values()).index(pred_target_top)]
             pred_proba = self.model.predict_proba([face_encod])[0]
-            pred_proba_top = pred_proba[pred_target_top][0]
+            pred_proba_top = round(pred_proba[pred_target_top][0] * 100, 2)
 
             df_name_predict_str = self.__create_answer_df(pred_proba)
 
@@ -96,23 +96,6 @@ class PredictModelImgLR:
         df_name_predict['Имена'] = col_name
         df_name_predict['Сходство'] = col_predict
         df_name_predict.sort_values('Сходство', ascending=False, inplace=True)
-        df_name_predict_str = df_name_predict.to_string(index=False)
+        df_name_predict_str = df_name_predict[0:5].to_string(index=False)
         return df_name_predict_str
 
-
-def __test_predict_model_img_lr():
-    path_dir = os.path.abspath(os.path.join('..', *config['predict']['path']))
-    user_name = 'dovolno_slov'
-    user_image_name = f'{user_name}_image.jpg'
-    path_load = os.path.join(path_dir, user_name, user_image_name)
-
-    predict_model_img_lr = PredictModelImgLR(path_load, SIZE_USERS_IMAGE_NEW)
-    pred_name, pred_proba_top, df_name_predict_str = predict_model_img_lr.predict_model()
-
-    print("predict name: %s" % pred_name)
-    print(pred_proba_top)
-    print('Процент:\n' + df_name_predict_str)
-
-
-if __name__ == "__main__":
-    __test_predict_model_img_lr()
