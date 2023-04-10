@@ -67,14 +67,18 @@ async def get_address(message: types.Message, state: FSMContext):
     if message.content_type in ['document', 'photo']:
         inp_photo, path_save = await __doc_type_path(message)
         await inp_photo.download(destination_file=path_save)
-        # !!!!!!!!!!!!!!!!!! ТУТ ПРЕДИКТ МОДЕЛИ ПО ФОТО
+        await message.reply('Фото получено. Пожалуйста, ожидайте результат.')
+        logging.info("Закачка фото, финал")
+
         model = model_predict.PredictModelImgLR(path_save)
-        test_predict, test_predict_name, test_predict_proba = model.predict_model()
-        # await...
+        answer_pred = await model.predict_model()
+        await message.answer(answer_pred)
+        logging.info("Обработано, ответ направлен")
     else:
-        answer = "К сожалению, это не фотография. Попробуйте сновая, начиная с команды /start"
-        await bot.send_message(message.from_user.id, answer)
-    logging.info(f"Закачка фото, финал")
+        answer = "К сожалению, это не фотография. Попробуйте снова, начиная с команды /start"
+        await message.reply(answer)
+        logging.info("Получено не изображение")
+
     await state.finish()
 
 

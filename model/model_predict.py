@@ -43,7 +43,7 @@ class PredictModelImgLR:
 
         image_resized_conv = self.__load_image()
         face_boxes = face_recognition.face_locations(image_resized_conv)
-        # если найдено больше 1 лица на изображении - оно исключается
+        # если найдено больше или меньше 1 лица на изображении - оно исключается
         if len(face_boxes) == 1:
             face_encod = face_recognition.face_encodings(image_resized_conv)[0]
             pred_target_top = self.model.predict([face_encod])
@@ -51,9 +51,11 @@ class PredictModelImgLR:
             pred_proba = self.model.predict_proba([face_encod])[0]
             pred_proba_top = round(pred_proba[pred_target_top][0] * 100, 2)
 
-            df_name_predict_str = self.__create_answer_df(pred_proba)
-
-            return pred_name_top, pred_proba_top, df_name_predict_str
+            answer_pred = self.__create_answer_pred(pred_name_top, pred_proba, pred_proba_top)
+        else:
+            answer_pred = 'К сожалению, не получилось однозначно определить Вас на изображении.' \
+                          'Попробуйте всё с начала.'
+        return answer_pred
 
     def __load_data(self) -> tuple[np.array, dict]:
         """ Загрузка данных для обучения """
@@ -82,7 +84,7 @@ class PredictModelImgLR:
 
         return image_resized_conv
 
-    def __create_answer_df(self, pred_proba: list) -> str:
+    def __create_answer_pred(self, pred_name_top:str, pred_proba: list, pred_proba_top: float) -> str:
         """
         Формирование ответа о сходстве в виде датасета
 
@@ -93,9 +95,15 @@ class PredictModelImgLR:
         df_name_predict = pd.DataFrame()
         col_name = self.name_targets.keys()
         col_predict = [round(pred * 100, 2) for pred in pred_proba]
-        df_name_predict['Имена'] = col_name
-        df_name_predict['Сходство'] = col_predict
-        df_name_predict.sort_values('Сходство', ascending=False, inplace=True)
-        df_name_predict_str = df_name_predict[0:5].to_string(index=False)
-        return df_name_predict_str
-
+        df_name_predict['name'] = col_name
+        df_name_predict['predict'] = col_predict
+        df_name_predict.sort_values('predict', ascending=False, inplace=True)
+        df_name_predict_str = df_name_predict[0:5].to_string(index=False,
+                                                             header=['Имена', 'Сходство, %'],
+                                                             justify='center')
+        answer = "Наибольшее сходство: {name_top}\n" \
+                 "Сходство в процентах: {pred_top}\n" \
+                 "\nТоп 5 рейтинг:\n{pred_df}".format(name_top=pred_name_top,
+                                                      pred_top=pred_proba_top,
+                                                      pred_df=df_name_predict_str)
+        return answer
