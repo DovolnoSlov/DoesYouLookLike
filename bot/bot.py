@@ -71,7 +71,7 @@ async def get_address(message: types.Message, state: FSMContext):
         logging.info("Закачка фото, финал")
 
         model = model_predict.PredictModelImgLR(path_save)
-        answer_pred = await model.predict_model()
+        answer_pred = model.predict_model()
         await message.answer(answer_pred)
         logging.info("Обработано, ответ направлен")
     else:

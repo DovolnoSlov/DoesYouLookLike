@@ -11,7 +11,7 @@ from sklearn.metrics import f1_score
 import preprocessing
 
 import logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(message)s')
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
 with open(os.path.join(__config_path)) as f:
@@ -26,7 +26,7 @@ PATH_MODEL = os.path.abspath(os.path.join('..', *config['model']['path']))
 RANDOM_STATE = config['model']['random_state']
 TEST_SIZE = config['model']['test_size']
 COEF_C = config['model']['coef_C']
-KEY_LOAD_IMAGES = config['model']['key_load_images']
+KEY_LOAD_TRAIN_IMAGES = config['model']['key_load_train_images']
 
 
 class NoLoad(Exception):
@@ -64,10 +64,10 @@ class ModelImgLR:
         """
         try:
             self.embeddings, self.targets = self.__load_data()
-            if not self.embeddings:
+            if self.embeddings is None:
                 raise NoLoad("Проблема с загрузкой эмбеддингов и таргетов")
         except NoLoad as ex:
-            logging.info(f'Произошла ошибка: {ex}')
+            logging.info(f"Произошла ошибка: {ex}")
 
         min_num_target, name_min_target = self.__check_min_target()
         if min_num_target > 1:
@@ -79,12 +79,13 @@ class ModelImgLR:
             model_LR.fit(X_train, y_train)
 
             self.__save_model(model_LR)
+            logging.info("Модель успешно обучена и сохранена")
 
             self.__f1_model_score = f1_score(y_test, model_LR.predict(X_test), average='micro')
             self.__fit_flag = True
 
         else:
-            logging.info(f'Проблемы с данными. Таргет: {name_min_target}')
+            logging.info(f"Проблемы с данными. Таргет: {name_min_target}")
 
     def __load_data(self) -> tuple[np.array, list]:
         """ Загрузка данных для обучения """
@@ -98,7 +99,7 @@ class ModelImgLR:
             with open(path_targets, 'rb') as file:
                 load_targets = pickle.load(file)
         except Exception as ex:
-            logging.info(f'Произошла ошибка: {ex}')
+            logging.info(f"Произошла ошибка: {ex}")
         else:
             return load_embeddings, load_targets
 
@@ -126,12 +127,12 @@ class ModelImgLR:
         """ Получение значения по метрике f1_score """
 
         if not self.__fit_flag:
-            logging.info(f'Модель не обучена!')
+            logging.info(f"Модель не обучена!")
         return self.__f1_model_score
 
 
 def __main():
-    if KEY_LOAD_IMAGES:
+    if KEY_LOAD_TRAIN_IMAGES:
         # загрузка изображений указанных актёров/актрис
         preprocessing.download_images(PATH_IMAGES, TARGET_ACTORS, LIMIT_LOAD_IMAGES)
 
@@ -147,7 +148,7 @@ def __main():
     my_model = ModelImgLR(PATH_MODEL, RANDOM_STATE, TEST_SIZE, COEF_C)
     my_model.fit_model()
     f1_model_score = my_model.get_score()
-    print(f'Метрика модели: F1 score: {f1_model_score}')
+    print(f"Метрика модели: F1 score: {f1_model_score}")
 
 
 if __name__ == "__main__":
