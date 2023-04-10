@@ -53,7 +53,7 @@ class PredictModelImgLR:
 
             answer_pred = self.__create_answer_pred(pred_name_top, pred_proba, pred_proba_top)
         else:
-            answer_pred = 'К сожалению, не получилось однозначно определить Вас на изображении.' \
+            answer_pred = 'К сожалению, не получилось однозначно определить Вас на изображении. ' \
                           'Попробуйте всё с начала.'
         return answer_pred
 
