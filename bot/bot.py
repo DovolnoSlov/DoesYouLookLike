@@ -84,6 +84,7 @@ async def get_address(message: types.Message, state: FSMContext):
 
 async def __doc_type_path(message):
     if message.content_type == 'document':
+        # if message.document.filename .jpg, .png, ....: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         inp_photo = message.document
     elif message.content_type == 'photo':
         inp_photo = message.photo[-1]
