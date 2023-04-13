@@ -25,7 +25,7 @@ dp = Dispatcher(bot, storage=storage)
 
 
 class UserState(StatesGroup):
-    gender = State()    # на будущее, для датасетов разных полов
+    gender = State()    # на будущее, для доп. функционала
     photo = State()
 
 
@@ -49,7 +49,7 @@ async def user_register(message: types.Message):
     answer_text = "Начнём, {name}!" \
                   "\nукажите свой пол".format(name=user_full_name)
 
-    logging.info(f'Набор команды start')
+    logging.info(f'Набор команды like, пользователь: {message.from_user.username}')
     await message.answer(answer_text, reply_markup=keyboard)
     await UserState.gender.set()
 
@@ -68,14 +68,14 @@ async def get_address(message: types.Message, state: FSMContext):
         inp_photo, path_save = await __doc_type_path(message)
         await inp_photo.download(destination_file=path_save)
         await message.reply('Фото получено. Пожалуйста, ожидайте результат.')
-        logging.info("Закачка фото, финал")
+        logging.info("Загрузка изображения пользователя, завершено")
 
         model = model_predict.PredictModelImgLR(path_save)
         answer_pred = model.predict_model()
         await message.answer(answer_pred)
-        logging.info("Обработано, ответ направлен")
+        logging.info(f"Изображение пользователя {message.from_user.username} обработано, ответ направлен")
     else:
-        answer = "К сожалению, это не фотография. Попробуйте снова, начиная с команды /start"
+        answer = "К сожалению, это не фотография. Попробуйте снова, начиная с команды /like"
         await message.reply(answer)
         logging.info("Получено не изображение")
 
@@ -91,7 +91,7 @@ async def __doc_type_path(message):
     user_name = message.from_user.username
     user_photo_name = f'{user_name}_photo.jpg'
     path_save = os.path.join(PATH_SAVE_USER_IMAGE, user_name, user_photo_name)
-    logging.info(f"Закачка фото, этап 2")
+    logging.info(f"Загрузка изображения пользователя, оценка типа и создание пути")
     return inp_photo, path_save
 
 
@@ -105,14 +105,14 @@ async def echo(message: types.Message):
 
 
 # cat's foto
-@dp.message_handler(regexp='(^cat[s]?$|puss|seba|Seba)')
+@dp.message_handler(regexp='(^[Cc]at[s]?$|^[Pp]uss|^[Ss]eba|^[Сс]еба)')
 async def cats(message: types.Message):
     with open('seba/seba_001.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='Cats are here 😺')
 
 
 # Polina's foto
-@dp.message_handler(regexp='(^polina|Полина|Поля)')
+@dp.message_handler(regexp='(^[Pp]olina|[Пп]олина|[Пп]оля)')
 async def cats(message: types.Message):
     with open('raznoe/beautiful_in_the_world.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='😉')
