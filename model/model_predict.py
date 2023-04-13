@@ -9,7 +9,7 @@ import numpy as np
 import preprocessing
 
 import logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(message)s')
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
 with open(os.path.join(__config_path)) as f:
@@ -52,9 +52,11 @@ class PredictModelImgLR:
             pred_proba_top = round(pred_proba[pred_target_top][0] * 100, 2)
 
             answer_pred = self.__create_answer_pred(pred_name_top, pred_proba, pred_proba_top)
+            logging.info('Предсказание успешно выполнено')
         else:
             answer_pred = 'К сожалению, не получилось однозначно определить Вас на изображении. ' \
                           'Попробуйте всё с начала.'
+            logging.info('Проблемы с изображением пользователя')
         return answer_pred
 
     def __load_data(self) -> tuple[np.array, dict]:

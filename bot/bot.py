@@ -10,7 +10,7 @@ import config_bot   # содержит токен чат-бота
 
 # log level
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 __config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
 with open(os.path.join(__config_path)) as f:

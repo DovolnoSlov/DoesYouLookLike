@@ -127,7 +127,7 @@ class ModelImgLR:
         """ Получение значения по метрике f1_score """
 
         if not self.__fit_flag:
-            logging.info(f"Модель не обучена!")
+            logging.info("Модель не обучена!")
         return self.__f1_model_score
 
 
