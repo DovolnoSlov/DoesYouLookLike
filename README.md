@@ -16,9 +16,9 @@ Who do you look like from celebrities
 
 	notebook\DoesYouLookLike_JN.ipynb - файл с первоначальным кодом на получение и обработку изображений, данных и самой модели, с последующим предсказанием на тестовом изображении.
 
-	preprocessing:
-		load_images.py:
-				download_images - загрузка изображений из Bing по запросу, сохранение в каталоге data\train_images
+preprocessing:
+	load_images.py:
+		download_images - загрузка изображений из Bing по запросу, сохранение в каталоге data\train_images
 				rename_dir - изменение имени каталогов с изображениями, сформированного по тексту запроса
 				count_files_in_dir - подсчёт количества файлов в каталогах с условием <2 -> True 
 				reformat_image - изменение размерности изображений, по списку имён, с помощью resize_image
