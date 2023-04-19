@@ -14,12 +14,6 @@ Who do you look like from celebrities
 
 Описание файлов проекта:
 
-Test:
-
-	- we:
-	
-		- weeww
-
 	notebook\DoesYouLookLike_JN.ipynb - файл с первоначальным кодом на получение и обработку изображений, данных и самой модели, с последующим предсказанием на тестовом изображении.
 
 	preprocessing:
