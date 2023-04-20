@@ -109,7 +109,7 @@ class PredictModelImgLR:
         df_name_predict['predict'] = col_predict
         df_name_predict.sort_values('predict', ascending=False, inplace=True)
         df_name_predict_str = df_name_predict[0:5].to_string(index=False,
-                                                             header=['Имена', 'Сходство, %'],
+                                                             header=['Имена', 'Сходство, из 100%'],
                                                              justify='center')
         answer = "Наибольшее сходство: {name_top}\n" \
                  "Сходство в процентах: {pred_top}\n" \
