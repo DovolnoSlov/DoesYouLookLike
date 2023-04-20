@@ -36,7 +36,8 @@ async def send_help(message: types.Message):
                         f"приятно познакомиться!\n"
                         f"/like - по данной команде Вы запустите работу, "
                         f"в рамках которой нужно будет отправить фотографию, "
-                        f"и Вы получите результат схожести с кем-то из знаменитых людей!")
+                        f"и Вы получите результат схожести с кем-то из знаменитых людей!"
+                        f"/mood - по данной команде происходит оперативное поднятие настроения!")
 
 
 @dp.message_handler(commands=['like'])
@@ -111,8 +112,8 @@ async def cats(message: types.Message):
         await message.reply_photo(photo, caption='Cats are here 😺')
 
 
-# Polina's foto
-@dp.message_handler(regexp='(^[Pp]olina|[Пп]олина|[Пп]оля)')
+# creating a mood
+@dp.message_handler(commands=['mood'])
 async def cats(message: types.Message):
     with open('raznoe/beautiful_in_the_world.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='😉')
