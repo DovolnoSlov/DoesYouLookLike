@@ -10,6 +10,7 @@ load_images:
 
 model:
   path: ['data', 'model_data']
+  name: 'model_LR.pkl'
   random_state: 13
   test_size: 0.25
   coef_C: 1.0

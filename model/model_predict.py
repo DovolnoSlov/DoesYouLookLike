@@ -16,6 +16,7 @@ with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
 PATH_LOAD_MODEL = os.path.abspath(os.path.join('..', *config['model']['path']))
+MODEL_NAME = config['model']['name']
 SIZE_USERS_IMAGE_NEW = config['predict']['size_image_users']
 
 
@@ -25,15 +26,19 @@ class PredictModelImgLR:
 
     Args:
         path_load_image (str): путь до тестового изображения
-        size_new (int): необходимый размер изображения по одной из сторон
-        path_load_model (str): путь до тестового изображения
+        size_new (int): const: необходимый размер изображения по одной из сторон
+        path_load_model (str): const: путь до тестового изображения
+        model_name (str): const: имя модели для загрузки из файла
     """
 
     def __init__(self, path_load_image: str,
-                 size_new: int = SIZE_USERS_IMAGE_NEW, path_load_model: str = PATH_LOAD_MODEL):
+                 size_new: int = SIZE_USERS_IMAGE_NEW,
+                 path_load_model: str = PATH_LOAD_MODEL,
+                 model_name: str = MODEL_NAME):
         self.path_load_image = path_load_image
         self.size_new = size_new
         self.path_load_model = path_load_model
+        self.model_name = model_name
 
         # загрузка модели, словаря имён:таргетов
         self.model, self.name_targets = self.__load_data()
@@ -60,10 +65,14 @@ class PredictModelImgLR:
         return answer_pred
 
     def __load_data(self) -> tuple[np.array, dict]:
-        """ Загрузка данных для обучения """
+        """
+        Загрузка данных для обучения
+
+        :return: tuple: модель и словарь имён:таргетов
+        """
 
         try:
-            path_model = os.path.join(self.path_load_model, 'model_LR.pkl')
+            path_model = os.path.join(self.path_load_model, self.model_name)
             with open(path_model, 'rb') as file:
                 load_model = pickle.load(file)
 
@@ -76,9 +85,8 @@ class PredictModelImgLR:
             return load_model, load_name_targets
 
     def __load_image(self) -> np.array:
-        """ Загрузка изображения, с изменением размера """
+        """ Загрузка изображения, с изменением размера и преобразованием в массив"""
 
-        # path_test_image = os.path.join(self.path_load, 'user_image.jpg')
         # изменение формата тестового изображения
         with Image.open(self.path_load_image) as image:
             image_resized = preprocessing.resize_image(image, self.size_new)
