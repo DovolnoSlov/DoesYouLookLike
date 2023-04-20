@@ -105,18 +105,18 @@ async def echo(message: types.Message):
     await message.answer(answer_text)
 
 
-# cat's foto
-@dp.message_handler(regexp='(^[Cc]at[s]?$|^[Pp]uss|^[Ss]eba|^[Сс]еба)')
-async def cats(message: types.Message):
-    with open('seba/seba_001.jpg', 'rb') as photo:
-        await message.reply_photo(photo, caption='Cats are here 😺')
-
-
 # creating a mood
 @dp.message_handler(commands=['mood'])
 async def cats(message: types.Message):
     with open('raznoe/beautiful_in_the_world.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='😉')
+
+
+# secret cat's foto
+@dp.message_handler(regexp='(^[Cc]at[s]?$|^[Pp]uss|^[Ss]eba|^[Сс]еба)')
+async def cats(message: types.Message):
+    with open('seba/seba_001.jpg', 'rb') as photo:
+        await message.reply_photo(photo, caption='Cats are here 😺')
 
 
 # echo

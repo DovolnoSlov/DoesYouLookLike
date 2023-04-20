@@ -79,8 +79,6 @@ class ModelImgLR:
             model_LR.fit(X_train, y_train)
 
             self.__save_model(model_LR)
-            logging.info("Модель успешно обучена и сохранена")
-
             self.__f1_model_score = f1_score(y_test, model_LR.predict(X_test), average='micro')
             self.__fit_flag = True
 
@@ -135,18 +133,23 @@ def __main():
     if KEY_LOAD_TRAIN_IMAGES:
         # загрузка изображений указанных актёров/актрис
         preprocessing.download_images(PATH_IMAGES, TARGET_ACTORS, LIMIT_LOAD_IMAGES)
+        logging.info('Изображения загружены')
 
         # изменение размера всех изображений
         preprocessing.reformat_image(PATH_IMAGES, TARGET_ACTORS, NEW_SIZE_OF_IMAGE)
+        logging.info('Размер всех изображений изменён')
 
-        # моздание объекта класса, для поиска лиц на фотографиях
+        # создание объекта класса, для поиска лиц на фотографиях
         actors_embedding = preprocessing.GetEmbedding(PATH_IMAGES, TARGET_ACTORS, PATH_MODEL)
 
         # получение эмбеддингов, таргетов, имён с индексами, и сохранение в файлы
         actors_embedding.get_save_embedding()
+        logging.info('Данные для модели созданы и сохранены')
 
     my_model = ModelImgLR(PATH_MODEL, RANDOM_STATE, TEST_SIZE, COEF_C)
     my_model.fit_model()
+    logging.info("Модель успешно обучена и сохранена")
+
     f1_model_score = my_model.get_score()
     print(f"Метрика модели: F1 score: {f1_model_score}")
 

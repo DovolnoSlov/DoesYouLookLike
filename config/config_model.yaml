@@ -4,9 +4,12 @@ load_images:
   images:
     target_actors: [ 'Angelina Jolie', 'Helena Bonham Carter', 'Jennifer Aniston',
                      'Julia Roberts', 'Kate Beckinsale', 'Keira Knightley', 'Lindsey Stirling',
-                     'Marilyn Monroe', 'Monica Bellucci', 'Lucy Liu', 'Scarlett Johansson' ]
+                     'Marilyn Monroe', 'Monica Bellucci', 'Lucy Liu', 'Scarlett Johansson',
+                     'Henry Cavill', 'Matthew McConaughey', 'Timothee Chalamet', 'Chris Hemsworth',
+                     'Xiao Zhan', 'Johnny Depp', 'Cristiano Ronaldo', 'Tom Hiddleston',
+                     'Lucien Leon Laviscount', 'Ryan Reynolds', 'Brad Pitt']
     size_new: 256
-    limit: 15
+    limit: 20
 
 model:
   path: ['data', 'model_data']

@@ -77,7 +77,7 @@ class GetEmbedding:
             name_targets[name] = target
         return name_targets
 
-    def __load_image(self, path_to_images: str, img:str) -> np.array:
+    def __load_image(self, path_to_images: str, img: str) -> np.array:
         """ Загрузка изображения """
 
         path_image = os.path.join(path_to_images, img)
