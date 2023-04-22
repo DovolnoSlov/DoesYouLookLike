@@ -41,7 +41,7 @@ async def send_help(message: types.Message):
 
 
 @dp.message_handler(commands=['like'])
-async def user_register(message: types.Message):
+async def like_get_gender(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = ['М', 'Ж']
     keyboard.add(*buttons)
@@ -56,7 +56,7 @@ async def user_register(message: types.Message):
 
 
 @dp.message_handler(state=UserState.gender)
-async def get_username(message: types.Message, state: FSMContext):
+async def like_get_photo(message: types.Message, state: FSMContext):
     await state.update_data(user_gender=message.text)
     await message.answer("Отлично! Теперь отправьте фотографию", reply_markup=types.ReplyKeyboardRemove())
     logging.info(f'Пол выбран')
@@ -64,7 +64,7 @@ async def get_username(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=UserState.photo, content_types=['document', 'photo', 'text'])
-async def get_address(message: types.Message, state: FSMContext):
+async def like_result(message: types.Message, state: FSMContext):
     if message.content_type in ['document', 'photo']:
         inp_photo, path_save = await __doc_type_path(message)
         await inp_photo.download(destination_file=path_save)
@@ -78,7 +78,7 @@ async def get_address(message: types.Message, state: FSMContext):
     else:
         answer = "К сожалению, это не фотография. Попробуйте снова, начиная с команды /like"
         await message.reply(answer)
-        logging.info("Получено не изображение")
+        logging.info(f"Получено не изображение. Работа с пользователем {message.from_user.username} завершена")
 
     await state.finish()
 
@@ -98,7 +98,7 @@ async def __doc_type_path(message):
 
 # Hi, name
 @dp.message_handler(regexp='(^[Hh]i|^[Пп]ривет)')
-async def echo(message: types.Message):
+async def hello_answer(message: types.Message):
     user_full_name = message.from_user.full_name
     answer_text = "Привет, {name}!" \
                   "\nПрекрасно выглядишь!".format(name=user_full_name)
@@ -107,14 +107,14 @@ async def echo(message: types.Message):
 
 # creating a mood
 @dp.message_handler(commands=['mood'])
-async def cats(message: types.Message):
+async def create_mood(message: types.Message):
     with open('raznoe/beautiful_in_the_world.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='😉')
 
 
 # secret cat's foto
 @dp.message_handler(regexp='(^[Cc]at[s]?$|^[Pp]uss|^[Ss]eba|^[Сс]еба)')
-async def cats(message: types.Message):
+async def secret_cat(message: types.Message):
     with open('seba/seba_001.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='Cats are here 😺')
 
