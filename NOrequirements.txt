@@ -1,0 +1,12 @@
+aiogram
+cmake
+dlib
+face_recognition
+pillow
+pickle
+PyYAML
+pandas
+numpy
+sklearn
+shutil
+bing_image_downloader
