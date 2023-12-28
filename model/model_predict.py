@@ -11,11 +11,11 @@ import preprocessing
 import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-__config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
+__config_path = os.path.abspath(os.path.join('config', 'config_model.yaml'))
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-PATH_LOAD_MODEL = os.path.abspath(os.path.join('..', *config['model']['path']))
+PATH_LOAD_MODEL = os.path.abspath(os.path.join(*config['model']['path']))
 MODEL_NAME = config['model']['name']
 SIZE_USERS_IMAGE_NEW = config['predict']['size_image_users']
 
@@ -64,7 +64,8 @@ class PredictModelImgLR:
             logging.info('Проблемы с изображением пользователя')
         return answer_pred
 
-    def __load_data(self) -> tuple[np.array, dict]:
+# -> tuple[np.array, dict]
+    def __load_data(self):
         """
         Загрузка данных для обучения
 
@@ -84,7 +85,8 @@ class PredictModelImgLR:
         else:
             return load_model, load_name_targets
 
-    def __load_image(self) -> np.array:
+# -> np.array
+    def __load_image(self):
         """ Загрузка изображения, с изменением размера и преобразованием в массив"""
 
         # изменение формата тестового изображения
@@ -92,6 +94,7 @@ class PredictModelImgLR:
             image_resized = preprocessing.resize_image(image, self.size_new)
             image_resized_conv = np.array(image_resized.convert('RGB'))
 
+        os.remove(self.path_load_image)
         return image_resized_conv
 
     def __create_answer_pred(self, pred_name_top:str, pred_proba: list, pred_proba_top: float) -> str:

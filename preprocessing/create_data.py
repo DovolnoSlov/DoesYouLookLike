@@ -38,7 +38,8 @@ class GetEmbedding:
         with open(path_act, 'w') as f:
             f.write(json_act)
 
-    def __create_embedding(self) -> tuple[np.array, list, dict]:
+# -> tuple[np.array, list, dict]
+    def __create_embedding(self):
         """
         Поиск лиц,
         и формирование эмбеддингов, таргетов и словаря имена:таргеты

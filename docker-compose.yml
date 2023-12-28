@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  chatbot:
+    build: .
+    restart: always
+    command: python app.py
+    env_file:
+      - ./bot/botenv.env

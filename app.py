@@ -5,21 +5,24 @@ from aiogram.dispatcher import FSMContext
 import os
 import yaml
 from model import model_predict
+from dotenv import load_dotenv
 
-import config_bot   # содержит токен чат-бота
+load_dotenv()
 
 # log level
 import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-__config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
+__config_path = os.path.abspath(os.path.join('config', 'config_model.yaml'))
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-PATH_SAVE_USER_IMAGE = os.path.abspath(os.path.join('..', *config['predict']['path']))
+PATH_SAVE_USER_IMAGE = os.path.abspath(os.path.join(*config['predict']['path']))
 
 # bot init
-bot = Bot(token=config_bot.TOKEN)
+TOKEN = os.getenv("TOKEN")
+bot = Bot(token=TOKEN)
+
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -71,8 +74,8 @@ async def like_result(message: types.Message, state: FSMContext):
         await message.reply('Фото получено. Пожалуйста, ожидайте результат.')
         logging.info("Загрузка изображения пользователя, завершено")
 
-        model = model_predict.PredictModelImgLR(path_save)
-        answer_pred = model.predict_model()
+        botmodel = model_predict.PredictModelImgLR(path_save)
+        answer_pred = botmodel.predict_model()
         await message.answer(answer_pred)
         logging.info(f"Изображение пользователя {message.from_user.username} обработано, ответ направлен")
     else:
@@ -107,15 +110,16 @@ async def hello_answer(message: types.Message):
 
 # creating a mood
 @dp.message_handler(commands=['mood'])
+@dp.message_handler(regexp='(^[Pp]olina|[Pp]oly|[Пп]олина|[Пп]оля)')
 async def create_mood(message: types.Message):
-    with open('raznoe/beautiful_in_the_world.jpg', 'rb') as photo:
+    with open('bot/raznoe/beautiful_in_the_world.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='😉')
 
 
 # secret cat's foto
 @dp.message_handler(regexp='(^[Cc]at[s]?$|^[Pp]uss|^[Ss]eba|^[Сс]еба)')
 async def secret_cat(message: types.Message):
-    with open('seba/seba_001.jpg', 'rb') as photo:
+    with open('bot/seba/seba_001.jpg', 'rb') as photo:
         await message.reply_photo(photo, caption='Cats are here 😺')
 
 

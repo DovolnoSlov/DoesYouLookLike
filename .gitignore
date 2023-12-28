@@ -1,2 +1,2 @@
 .idea/
-bot/config_bot.py
+/bot/botenv.env

@@ -13,16 +13,16 @@ import preprocessing
 import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-__config_path = os.path.abspath(os.path.join('..', 'config', 'config_model.yaml'))
+__config_path = os.path.abspath(os.path.join('config', 'config_model.yaml'))
 with open(os.path.join(__config_path)) as f:
     config = yaml.safe_load(f)
 
-PATH_IMAGES = os.path.abspath(os.path.join('..', *config['load_images']['path']))
+PATH_IMAGES = os.path.abspath(os.path.join(*config['load_images']['path']))
 TARGET_ACTORS = config['load_images']['images']['target_actors']
 NEW_SIZE_OF_IMAGE = config['load_images']['images']['size_new']
 LIMIT_LOAD_IMAGES = config['load_images']['images']['limit']
 
-PATH_MODEL = os.path.abspath(os.path.join('..', *config['model']['path']))
+PATH_MODEL = os.path.abspath(os.path.join(*config['model']['path']))
 RANDOM_STATE = config['model']['random_state']
 TEST_SIZE = config['model']['test_size']
 COEF_C = config['model']['coef_C']
@@ -85,7 +85,8 @@ class ModelImgLR:
         else:
             logging.info(f"Проблемы с данными. Таргет: {name_min_target}")
 
-    def __load_data(self) -> tuple[np.array, list]:
+    # -> tuple[np.array, list]
+    def __load_data(self):
         """ Загрузка данных для обучения """
 
         try:
@@ -101,7 +102,8 @@ class ModelImgLR:
         else:
             return load_embeddings, load_targets
 
-    def __check_min_target(self) -> tuple[int, str]:
+    #-> tuple[int, str]
+    def __check_min_target(self):
         """ Подсчёт количества каждой из меток в списке, с нахождением минимального """
 
         targets_counter = Counter(self.targets)

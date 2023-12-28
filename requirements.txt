@@ -3,10 +3,9 @@ cmake
 dlib
 face_recognition
 pillow
-pickle
-PyYAML
 pandas
 numpy
-sklearn
-shutil
+pyyaml
+scikit-learn
 bing_image_downloader
+python-dotenv
